@@ -1,0 +1,3 @@
+[submodule "src/FIRA-Autonomous-Cars-Simulator"]
+	path = src/FIRA-Autonomous-Cars-Simulator
+	url = https://github.com/IRIS-ITS/FIRA-Autonomous-Cars-Simulator
