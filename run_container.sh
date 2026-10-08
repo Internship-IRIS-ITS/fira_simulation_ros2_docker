@@ -9,16 +9,21 @@ IMAGE="${IMAGE:-fira_simulation_ws_3:latest}"
 CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ws_3}"
 
 FORCE_BUILD=0
-ROS_LOCALHOST_ONLY_VALUE=1
+ROS_LOCALHOST_ONLY_VALUE=0
+ROS_DOMAIN_ID_VALUE=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -b|--build|--rebuild)
             FORCE_BUILD=1
             shift
             ;;
-        --disable-localhost-only)
-            ROS_LOCALHOST_ONLY_VALUE=0
+        --localhost-only)
+            ROS_LOCALHOST_ONLY_VALUE=1
             shift
+            ;;
+        -d|--domain-id)
+            ROS_DOMAIN_ID_VALUE="$2"
+            shift 2
             ;;
         --)
             shift
@@ -51,6 +56,7 @@ podman run --rm -it \
     -e DISPLAY="${DISPLAY:-:0}" \
     -e QT_X11_NO_MITSHM=1 \
     -e ROS_LOCALHOST_ONLY="$ROS_LOCALHOST_ONLY_VALUE" \
+    -e ROS_DOMAIN_ID="$ROS_DOMAIN_ID_VALUE" \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
     -v "${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority:ro" \
     --device /dev/dri \
