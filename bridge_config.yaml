@@ -12,7 +12,7 @@ topics:
     type: sensor_msgs/msg/CompressedImage
     queue_size: 1
   -
-    topic: /wheel_vel_cmd
+    topic: /catvehicle/diffdrive_vel
     type: std_msgs/msg/Int32MultiArray
     queue_size: 1
 
