@@ -9,15 +9,15 @@ IMAGE="${IMAGE:-fira_simulation_ws_3:latest}"
 CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ws_3}"
 
 FORCE_BUILD=0
-ROS_LOCALHOST_ONLY_VALUE=0
+ROS_LOCALHOST_ONLY_VALUE=1
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -b|--build|--rebuild)
             FORCE_BUILD=1
             shift
             ;;
-        --localhost-only)
-            ROS_LOCALHOST_ONLY_VALUE=1
+        --disable-localhost-only)
+            ROS_LOCALHOST_ONLY_VALUE=0
             shift
             ;;
         --)
