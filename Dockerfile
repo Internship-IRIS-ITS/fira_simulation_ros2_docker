@@ -8,7 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # initialized, the workspace dependencies (four_wheel_steering_msgs,
 # urdf_geometry_parser, ros_controllers, velodyne, can_msgs) built into
 # /opt/ros/noetic, and ros1_bridge built into /opt/ros/jazzy. This Dockerfile
-# only builds the FIRA-Autonomous-Cars-Simulator application itself.
+# only builds the FIRA-Autonomous-Cars-Simulator application and the
+# iris_fira_simulation bridge nodes.
 
 # ccache to speed up recompiles across rebuilds.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -25,6 +26,7 @@ ENV CCACHE_DIR=/root/.ccache
 
 WORKDIR /root/fira_simulation_ws_3
 COPY src/FIRA-Autonomous-Cars-Simulator ./src/FIRA-Autonomous-Cars-Simulator
+COPY src/iris_fira_simulation ./src/iris_fira_simulation
 COPY bridge_config.yaml /root/bridge_config.yaml
 
 # catkin_make's generated top-level Makefile doesn't always encode
