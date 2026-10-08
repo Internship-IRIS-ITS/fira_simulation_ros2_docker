@@ -11,6 +11,10 @@ topics:
     topic: /catvehicle/camera_front/image_raw_front/compressed
     type: sensor_msgs/msg/CompressedImage
     queue_size: 1
+  -
+    topic: /wheel_vel_cmd
+    type: std_msgs/msg/Int32MultiArray
+    queue_size: 1
 
 services_1_to_2: []
 services_2_to_1: []
