@@ -93,6 +93,22 @@ if command -v xhost >/dev/null 2>&1; then
     xhost +local: >/dev/null 2>&1 || true
 fi
 
+# Without a GPU (/dev/dri missing, e.g. VMs or GPU-less machines) skip the
+# device passthrough and fall back to Mesa software rendering (llvmpipe), which
+# is slower but lets Gazebo's GUI start. Likewise only mount the Xauthority
+# file when it exists, since podman refuses to start on a missing bind source.
+EXTRA_ARGS=()
+if [[ -d /dev/dri ]]; then
+    EXTRA_ARGS+=(--device /dev/dri)
+else
+    echo "No /dev/dri found; using software rendering." >&2
+    EXTRA_ARGS+=(-e LIBGL_ALWAYS_SOFTWARE=1)
+fi
+XAUTH_FILE="${XAUTHORITY:-$HOME/.Xauthority}"
+if [[ -f "$XAUTH_FILE" ]]; then
+    EXTRA_ARGS+=(-v "$XAUTH_FILE:/root/.Xauthority:ro")
+fi
+
 podman run --rm -it \
     --name "$CONTAINER_NAME" \
     --network host \
@@ -104,6 +120,5 @@ podman run --rm -it \
     -e ROS_LOCALHOST_ONLY="$ROS_LOCALHOST_ONLY_VALUE" \
     -e ROS_DOMAIN_ID="$ROS_DOMAIN_ID_VALUE" \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-    -v "${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority:ro" \
-    --device /dev/dri \
+    ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"} \
     "$IMAGE" "$@"
