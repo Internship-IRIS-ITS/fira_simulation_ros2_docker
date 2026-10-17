@@ -17,7 +17,7 @@ sehingga simulasi dapat dikendalikan dan diamati dari ROS 2.
 ## Mulai cepat
 
 ```bash
-./run_container.sh
+./scripts/run_container.sh
 ```
 
 Perintah ini menjalankan simulasi dan bridge sekaligus. Jika tidak ada image
@@ -46,7 +46,7 @@ Setiap skrip menerima `-h`/`--help`.
 ### `run_container.sh`
 
 ```
-./run_container.sh [opsi] [perintah...]
+./scripts/run_container.sh [opsi] [perintah...]
 ```
 
 | Opsi                     | Deskripsi                                                  |
@@ -69,9 +69,9 @@ Setiap skrip menerima `-h`/`--help`.
 Contoh:
 
 ```bash
-./run_container.sh -d 42            # pakai ROS_DOMAIN_ID=42
-./run_container.sh sim              # hanya simulasi
-./run_container.sh bash             # shell di dalam container
+./scripts/run_container.sh -d 42            # pakai ROS_DOMAIN_ID=42
+./scripts/run_container.sh sim              # hanya simulasi
+./scripts/run_container.sh bash             # shell di dalam container
 ```
 
 ### Image yang dipakai
@@ -89,14 +89,14 @@ Aturan pertama yang cocok akan dipakai:
 Podman hanya mengunduh image remote saat pertama kali. Untuk memperbaruinya:
 
 ```bash
-./pull.sh
+./scripts/pull.sh
 ```
 
 Jika Anda punya image lokal `fira_simulation_ros2_docker`, image tersebut
 diprioritaskan. Jalankan dengan `--remote`, atau hapus image lokalnya:
 
 ```bash
-./run_container.sh --remote
+./scripts/run_container.sh --remote
 # atau
 podman rmi fira_simulation_ros2_docker
 ```
@@ -107,11 +107,11 @@ Jika paket GHCR bersifat privat, login terlebih dahulu dengan
 ## Membangun secara lokal
 
 ```bash
-./build.sh                # membangun fira_simulation_ros2_docker
-./run_container.sh        # sekarang memakai image lokal
+./scripts/build.sh                # membangun fira_simulation_ros2_docker
+./scripts/run_container.sh        # sekarang memakai image lokal
 ```
 
-Atau bangun dan jalankan sekaligus dengan `./run_container.sh --build`.
+Atau bangun dan jalankan sekaligus dengan `./scripts/run_container.sh --build`.
 
 ## Variabel lingkungan
 
@@ -123,4 +123,4 @@ Atau bangun dan jalankan sekaligus dengan `./run_container.sh --build`.
 ## Topik yang di-bridge
 
 Ubah `bridge_config.yaml` untuk mengatur topik yang di-bridge, lalu bangun
-ulang image (`./build.sh`).
+ulang image (`./scripts/build.sh`).

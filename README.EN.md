@@ -17,7 +17,7 @@ can drive and observe the simulation from ROS 2.
 ## Quick start
 
 ```bash
-./run_container.sh
+./scripts/run_container.sh
 ```
 
 This starts both the simulation and the bridge. If no local image exists, the
@@ -45,7 +45,7 @@ Every script accepts `-h`/`--help`.
 ### `run_container.sh`
 
 ```
-./run_container.sh [options] [command...]
+./scripts/run_container.sh [options] [command...]
 ```
 
 | Option                   | Description                                         |
@@ -68,9 +68,9 @@ The optional `command` is passed to the container entrypoint:
 Examples:
 
 ```bash
-./run_container.sh -d 42            # use ROS_DOMAIN_ID=42
-./run_container.sh sim              # simulation only
-./run_container.sh bash             # shell inside the container
+./scripts/run_container.sh -d 42            # use ROS_DOMAIN_ID=42
+./scripts/run_container.sh sim              # simulation only
+./scripts/run_container.sh bash             # shell inside the container
 ```
 
 ### Which image is used
@@ -88,14 +88,14 @@ First match wins:
 Podman only pulls the remote image the first time. To update it:
 
 ```bash
-./pull.sh
+./scripts/pull.sh
 ```
 
 If you have a local `fira_simulation_ros2_docker` image, it takes priority.
 Either run with `--remote`, or remove the local one:
 
 ```bash
-./run_container.sh --remote
+./scripts/run_container.sh --remote
 # or
 podman rmi fira_simulation_ros2_docker
 ```
@@ -105,11 +105,11 @@ If the GHCR package is private, log in first with `podman login ghcr.io`.
 ## Building locally
 
 ```bash
-./build.sh                # builds fira_simulation_ros2_docker
-./run_container.sh        # now uses the local image
+./scripts/build.sh                # builds fira_simulation_ros2_docker
+./scripts/run_container.sh        # now uses the local image
 ```
 
-Or build and run in one step with `./run_container.sh --build`.
+Or build and run in one step with `./scripts/run_container.sh --build`.
 
 ## Environment variables
 
@@ -121,4 +121,4 @@ Or build and run in one step with `./run_container.sh --build`.
 ## Bridged topics
 
 Edit `bridge_config.yaml` to change which topics are bridged, then rebuild the
-image (`./build.sh`).
+image (`./scripts/build.sh`).
