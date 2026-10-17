@@ -5,8 +5,18 @@
 # port mapping.
 set -euo pipefail
 
-IMAGE="${IMAGE:-fira_simulation_ws_3:latest}"
-CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ws_3}"
+LOCAL_IMAGE="fira_simulation_ros2_docker"
+REMOTE_IMAGE="ghcr.io/internship-iris-its/fira_simulation_ros2_bridge"
+CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ros2_docker}"
+
+# Prefer the locally built image; otherwise fall back to the GHCR one.
+if [[ -z "${IMAGE:-}" ]]; then
+    if podman image exists "$LOCAL_IMAGE"; then
+        IMAGE="$LOCAL_IMAGE"
+    else
+        IMAGE="$REMOTE_IMAGE"
+    fi
+fi
 
 FORCE_BUILD=0
 ROS_LOCALHOST_ONLY_VALUE=0
@@ -35,12 +45,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ "$FORCE_BUILD" -eq 1 ]] || ! podman image exists "$IMAGE"; then
-    echo "Building image '$IMAGE'..."
-    # --pull=newer refreshes the manoedinata/ubuntu24-ros-jazzy-noetic-docker
-    # base image whenever a newer version is available on Docker Hub, so a
-    # stale local copy doesn't silently miss packages baked in there.
-    podman build --pull=newer -t "$IMAGE" "$(dirname "$0")"
+if [[ "$FORCE_BUILD" -eq 1 ]]; then
+    IMAGE="$LOCAL_IMAGE" "$(dirname "$0")/build.sh"
+    IMAGE="$LOCAL_IMAGE"
 fi
 
 if command -v xhost >/dev/null 2>&1; then
