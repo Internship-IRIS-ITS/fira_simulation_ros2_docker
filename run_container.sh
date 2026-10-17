@@ -9,6 +9,30 @@ LOCAL_IMAGE="fira_simulation_ros2_docker"
 REMOTE_IMAGE="ghcr.io/internship-iris-its/fira_simulation_ros2_docker"
 CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ros2_docker}"
 
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [options] [command...]
+
+Run the FIRA simulation and ROS 1 <-> ROS 2 bridge in a podman container.
+With no command, the container starts both the simulation and the bridge.
+Commands: sim, bridge, all, or any other command to exec inside the container.
+
+Options:
+  -b, --build, --rebuild   Build the image locally first (runs build.sh)
+  -r, --remote             Force the GHCR image, even if a local one exists
+  -d, --domain-id N        ROS_DOMAIN_ID (default: 0)
+      --localhost-only     Set ROS_LOCALHOST_ONLY=1 (default: 0)
+  -h, --help               Show this help
+
+Image selection (first match wins):
+  \$IMAGE env var, --remote, --build, local $LOCAL_IMAGE, $REMOTE_IMAGE
+
+Environment:
+  IMAGE            Use this image, overriding the selection above
+  CONTAINER_NAME   Container name (default: fira_simulation_ros2_docker)
+EOF
+}
+
 FORCE_BUILD=0
 FORCE_REMOTE=0
 ROS_LOCALHOST_ONLY_VALUE=0
@@ -18,6 +42,10 @@ while [[ $# -gt 0 ]]; do
         -b|--build|--rebuild)
             FORCE_BUILD=1
             shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
             ;;
         -r|--remote)
             FORCE_REMOTE=1

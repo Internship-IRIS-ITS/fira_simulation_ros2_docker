@@ -16,6 +16,13 @@ run_bridge() {
 }
 
 case "${1:-all}" in
+    -h|--help|help)
+        echo "Usage: entrypoint.sh [sim|bridge|all|command...]"
+        echo "  sim      Launch the Gazebo simulation only"
+        echo "  bridge   Run the ros1_bridge parameter_bridge only"
+        echo "  all      Run both (default)"
+        echo "  other    Exec the given command"
+        ;;
     sim)
         run_sim
         ;;
