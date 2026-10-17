@@ -6,25 +6,21 @@
 set -euo pipefail
 
 LOCAL_IMAGE="fira_simulation_ros2_docker"
-REMOTE_IMAGE="ghcr.io/internship-iris-its/fira_simulation_ros2_bridge"
+REMOTE_IMAGE="ghcr.io/internship-iris-its/fira_simulation_ros2_docker"
 CONTAINER_NAME="${CONTAINER_NAME:-fira_simulation_ros2_docker}"
 
-# Prefer the locally built image; otherwise fall back to the GHCR one.
-if [[ -z "${IMAGE:-}" ]]; then
-    if podman image exists "$LOCAL_IMAGE"; then
-        IMAGE="$LOCAL_IMAGE"
-    else
-        IMAGE="$REMOTE_IMAGE"
-    fi
-fi
-
 FORCE_BUILD=0
+FORCE_REMOTE=0
 ROS_LOCALHOST_ONLY_VALUE=0
 ROS_DOMAIN_ID_VALUE=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -b|--build|--rebuild)
             FORCE_BUILD=1
+            shift
+            ;;
+        -r|--remote)
+            FORCE_REMOTE=1
             shift
             ;;
         --localhost-only)
@@ -45,9 +41,24 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+if [[ "$FORCE_BUILD" -eq 1 && "$FORCE_REMOTE" -eq 1 ]]; then
+    echo "--build and --remote are mutually exclusive" >&2
+    exit 1
+fi
+
+# Image precedence: $IMAGE env, --remote, --build, local image, GHCR fallback.
+if [[ -z "${IMAGE:-}" ]]; then
+    if [[ "$FORCE_REMOTE" -eq 1 ]]; then
+        IMAGE="$REMOTE_IMAGE"
+    elif [[ "$FORCE_BUILD" -eq 1 ]] || podman image exists "$LOCAL_IMAGE"; then
+        IMAGE="$LOCAL_IMAGE"
+    else
+        IMAGE="$REMOTE_IMAGE"
+    fi
+fi
+
 if [[ "$FORCE_BUILD" -eq 1 ]]; then
     IMAGE="$LOCAL_IMAGE" "$(dirname "$0")/build.sh"
-    IMAGE="$LOCAL_IMAGE"
 fi
 
 if command -v xhost >/dev/null 2>&1; then
