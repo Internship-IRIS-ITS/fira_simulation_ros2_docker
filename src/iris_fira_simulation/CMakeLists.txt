@@ -13,4 +13,5 @@ catkin_package(
 catkin_install_python(PROGRAMS
                         scripts/diffdrive2gazebo.py
                         scripts/ackermann2gazebo.py
+                        scripts/ackermann2gazebo_udp.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
