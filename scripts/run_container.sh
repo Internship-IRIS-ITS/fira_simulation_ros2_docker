@@ -119,6 +119,7 @@ podman run --rm -it \
     -e QT_X11_NO_MITSHM=1 \
     -e ROS_LOCALHOST_ONLY="$ROS_LOCALHOST_ONLY_VALUE" \
     -e ROS_DOMAIN_ID="$ROS_DOMAIN_ID_VALUE" \
+    -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
     ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"} \
     "$IMAGE" "$@"
