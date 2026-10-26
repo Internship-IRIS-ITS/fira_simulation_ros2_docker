@@ -20,7 +20,7 @@ Commands: sim, bridge, all, or any other command to exec inside the container.
 Options:
   -b, --build, --rebuild   Build the image locally first (runs build.sh)
   -r, --remote             Force the GHCR image, even if a local one exists
-  -d, --domain-id N        ROS_DOMAIN_ID (default: 0)
+  -d, --domain-id N        ROS_DOMAIN_ID, 0-232 (default: \$ROS_DOMAIN_ID, else 0)
       --localhost-only     Set ROS_LOCALHOST_ONLY=1 (default: 0)
   -h, --help               Show this help
 
@@ -29,6 +29,7 @@ Image selection (first match wins):
 
 Environment:
   IMAGE            Use this image, overriding the selection above
+  ROS_DOMAIN_ID    Default domain ID when -d is not given
   CONTAINER_NAME   Container name (default: fira_simulation_ros2_docker)
 EOF
 }
@@ -36,7 +37,7 @@ EOF
 FORCE_BUILD=0
 FORCE_REMOTE=0
 ROS_LOCALHOST_ONLY_VALUE=0
-ROS_DOMAIN_ID_VALUE=0
+ROS_DOMAIN_ID_VALUE="${ROS_DOMAIN_ID:-0}"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -b|--build|--rebuild)
@@ -56,6 +57,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -d|--domain-id)
+            if [[ $# -lt 2 ]]; then
+                echo "$1 needs a value" >&2
+                exit 1
+            fi
             ROS_DOMAIN_ID_VALUE="$2"
             shift 2
             ;;
@@ -68,6 +73,12 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Fast DDS maps the domain ID to UDP ports; Linux limits it to 0-232.
+if ! [[ "$ROS_DOMAIN_ID_VALUE" =~ ^[0-9]+$ ]] || (( 10#$ROS_DOMAIN_ID_VALUE > 232 )); then
+    echo "Invalid ROS_DOMAIN_ID '$ROS_DOMAIN_ID_VALUE' (expected 0-232)" >&2
+    exit 1
+fi
 
 if [[ "$FORCE_BUILD" -eq 1 && "$FORCE_REMOTE" -eq 1 ]]; then
     echo "--build and --remote are mutually exclusive" >&2
