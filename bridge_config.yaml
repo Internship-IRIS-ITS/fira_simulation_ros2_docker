@@ -1,23 +1,11 @@
 topics:
   -
-    topic: /catvehicle/cmd_vel_safe
-    type: geometry_msgs/msg/Twist
-    queue_size: 1
-  -
     topic: /catvehicle/camera_front/image_raw_front
     type: sensor_msgs/msg/Image
     queue_size: 1
   -
     topic: /catvehicle/camera_front/image_raw_front/compressed
     type: sensor_msgs/msg/CompressedImage
-    queue_size: 1
-  -
-    topic: /catvehicle/diffdrive_vel
-    type: std_msgs/msg/Int32MultiArray
-    queue_size: 1
-  -
-    topic: /catvehicle/ackermann_vel
-    type: std_msgs/msg/Int32MultiArray
     queue_size: 1
 
 services_1_to_2: []
